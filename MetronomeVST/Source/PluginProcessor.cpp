@@ -5,7 +5,7 @@
 
   ==============================================================================
 */
-
+#include <cmath>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -95,6 +95,13 @@ void MetronomeVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    // sampleRate = sr;
+    bpm = 120.0;
+
+    samplesUntilNextClick = 0;
+    clickSamplesRemaining = 0;
+    beatCounter = 0;
+    clickPhase = 0.0f;
 }
 
 void MetronomeVSTAudioProcessor::releaseResources()
@@ -131,30 +138,49 @@ bool MetronomeVSTAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 
 void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+juce::ScopedNoDenormals noDenormals;
+    buffer.clear();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    const int numSamples = buffer.getNumSamples();
+    const int numChannels = buffer.getNumChannels();
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    const int samplesPerBeat = static_cast<int>((60.0 / bpm) * sampleRate);
+    const int clickLengthSamples = static_cast<int>(0.03 * sampleRate); // 30 ms
+
+    for (int sample = 0; sample < numSamples; ++sample)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        if (samplesUntilNextClick <= 0)
+        {
+            clickSamplesRemaining = clickLengthSamples;
+            samplesUntilNextClick = samplesPerBeat;
 
-        // ..do something to the data...
+            beatCounter = (beatCounter + 1) % 4;
+            clickPhase = 0.0f;
+        }
+
+        float click = 0.0f;
+
+        if (clickSamplesRemaining > 0)
+        {
+            const bool isAccent = beatCounter == 1;
+
+            const float frequency = isAccent ? 1800.0f : 1000.0f;
+            const float amplitude = isAccent ? 0.8f : 0.45f;
+
+            click = std::sin(clickPhase) * amplitude;
+
+            clickPhase += juce::MathConstants<float>::twoPi * frequency / static_cast<float>(sampleRate);
+
+            const float fade = static_cast<float>(clickSamplesRemaining) / static_cast<float>(clickLengthSamples);
+            click *= fade;
+
+            --clickSamplesRemaining;
+        }
+
+        for (int channel = 0; channel < numChannels; ++channel)
+            buffer.setSample(channel, sample, click);
+
+        --samplesUntilNextClick;
     }
 }
 

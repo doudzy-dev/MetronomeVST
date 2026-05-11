@@ -56,4 +56,13 @@ public:
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessor)
+
+    double sampleRate = 44100.0;
+    double bpm = 120.0;
+
+    int samplesUntilNextClick = 0;
+    int clickSamplesRemaining = 0;
+    int beatCounter = 0;
+
+    float clickPhase = 0.0f;
 };
