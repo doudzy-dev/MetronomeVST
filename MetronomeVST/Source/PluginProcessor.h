@@ -61,6 +61,10 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     std::atomic<int> displayedBeat { 0 };
     int lastSubdivision = -1;
     int currentSubdivisionInBar = 0;
+
+    std::atomic<double> elapsedSeconds { 0.0 };
+    int64_t elapsedSamples = 0;
+    bool wasPlaying = false;
   private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessor)

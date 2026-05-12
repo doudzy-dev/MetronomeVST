@@ -49,9 +49,13 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
         subdivisionBox
     );
 
+    timerLabel.setJustificationType(juce::Justification::centred);
+    timerLabel.setFont(juce::Font(24.0f, juce::Font::bold));
+    timerLabel.setText("00:00", juce::dontSendNotification);
 
+    addAndMakeVisible(timerLabel);
 
-    setSize (300, 360);
+    setSize (300, 410);
 
     startTimerHz(60);
 }
@@ -104,7 +108,7 @@ void MetronomeVSTAudioProcessorEditor::resized()
     bpmSlider.setBounds(75, 135, 150, 150);
     subdivisionLabel.setBounds(0, 225, getWidth(), 25);
     subdivisionBox.setBounds(95, 255, 110, 30);
-    
+    timerLabel.setBounds(0, 310, getWidth(), 35);
 }
 void MetronomeVSTAudioProcessorEditor::timerCallback()
 {
@@ -123,6 +127,15 @@ void MetronomeVSTAudioProcessorEditor::timerCallback()
     {
         ledOn = false;
     }
+    const int totalSeconds =
+        static_cast<int>(audioProcessor.elapsedSeconds.load());
 
+    const int minutes = totalSeconds / 60;
+    const int seconds = totalSeconds % 60;
+
+    timerLabel.setText(
+        juce::String::formatted("%02d:%02d", minutes, seconds),
+        juce::dontSendNotification
+    );
     repaint();
 }

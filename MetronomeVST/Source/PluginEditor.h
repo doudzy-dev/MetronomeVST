@@ -41,6 +41,8 @@ public:
     using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
     std::unique_ptr<ComboBoxAttachment> subdivisionAttachment;
 
+    juce::Label timerLabel;
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

@@ -102,6 +102,10 @@ void MetronomeVSTAudioProcessor::prepareToPlay (double sr, int samplesPerBlock)
     clickPhase = 0.0f;
     lastSubdivision = -1;
     currentSubdivisionInBar = 0;
+
+    elapsedSamples = 0;
+    wasPlaying = false;
+    elapsedSeconds.store(0.0);
 }
 
 void MetronomeVSTAudioProcessor::releaseResources()
@@ -159,14 +163,20 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     const int numChannels = buffer.getNumChannels();
 
     const int clickLengthSamples = static_cast<int>(0.03 * sampleRate);
+    if (isPlaying && !wasPlaying)
+        elapsedSamples = 0;
 
+    wasPlaying = isPlaying;
     if (!isPlaying)
     {
         lastBeat = -1;
+        lastSubdivision = -1;
         clickSamplesRemaining = 0;
+        elapsedSeconds.store(0.0);
         return;
     }
-
+    elapsedSamples += numSamples;
+    elapsedSeconds.store(static_cast<double>(elapsedSamples) / sampleRate);
     const double ppqPerSample =
         hostBpm / 60.0 / sampleRate;
 
