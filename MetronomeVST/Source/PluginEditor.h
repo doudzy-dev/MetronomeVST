@@ -35,6 +35,12 @@ public:
     int ledCounter = 0;
     int currentDisplayedBeat = 0;
 
+    juce::ComboBox subdivisionBox;
+    juce::Label subdivisionLabel;
+
+    using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
+    std::unique_ptr<ComboBoxAttachment> subdivisionAttachment;
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

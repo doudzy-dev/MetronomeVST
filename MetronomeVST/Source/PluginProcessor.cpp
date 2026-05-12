@@ -100,6 +100,8 @@ void MetronomeVSTAudioProcessor::prepareToPlay (double sr, int samplesPerBlock)
 
     clickSamplesRemaining = 0;
     clickPhase = 0.0f;
+    lastSubdivision = -1;
+    currentSubdivisionInBar = 0;
 }
 
 void MetronomeVSTAudioProcessor::releaseResources()
@@ -168,18 +170,40 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     const double ppqPerSample =
         hostBpm / 60.0 / sampleRate;
 
+
+    const int subdivisionChoice =
+    static_cast<int>(parameters.getRawParameterValue("subdivision")->load());
+
+    double subdivisionsPerBeat = 1.0;
+
+    switch (subdivisionChoice)
+    {
+        case 0: subdivisionsPerBeat = 1.0; break; // noires
+        case 1: subdivisionsPerBeat = 2.0; break; // croches
+        case 2: subdivisionsPerBeat = 4.0; break; // doubles
+        case 3: subdivisionsPerBeat = 3.0; break; // triolets
+        default: subdivisionsPerBeat = 1.0; break;
+    }    
+    
     for (int sample = 0; sample < numSamples; ++sample)
     {
         const double currentPpq =
             ppqPosition + static_cast<double>(sample) * ppqPerSample;
 
-        const int beat = static_cast<int>(std::floor(currentPpq));
+        const int subdivision =
+            static_cast<int>(std::floor(currentPpq * subdivisionsPerBeat));
 
-        if (beat != lastBeat)
+        if (subdivision != lastSubdivision)
         {
-            lastBeat = beat;
+            lastSubdivision = subdivision;
+
+            const int beat =
+                static_cast<int>(std::floor(currentPpq));
 
             currentBeatInBar = beat % 4;
+
+            currentSubdivisionInBar =
+                subdivision % static_cast<int>(4 * subdivisionsPerBeat);
 
             displayedBeat.store(currentBeatInBar);
             beatFlash.store(true);
@@ -192,11 +216,15 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
         if (clickSamplesRemaining > 0)
         {
-            const bool isAccent = currentBeatInBar == 0;
-
-            const float frequency = isAccent ? 1800.0f : 1000.0f;
-            const float amplitude = isAccent ? 0.8f : 0.45f;
-
+            //const bool isAccent = currentBeatInBar == 0;
+            const bool isDownbeat = currentBeatInBar == 0 && currentSubdivisionInBar == 0;
+            const bool isBeat = currentSubdivisionInBar % static_cast<int>(subdivisionsPerBeat) == 0;
+            
+            //const float frequency = isAccent ? 1800.0f : 1000.0f;
+            //const float amplitude = isAccent ? 0.8f : 0.45f;
+            const float frequency = isDownbeat ? 1800.0f : (isBeat ? 1200.0f : 800.0f);
+            const float amplitude = isDownbeat ? 0.8f : (isBeat ? 0.5f : 0.25f);
+            
             click = std::sin(clickPhase) * amplitude;
 
             clickPhase += juce::MathConstants<float>::twoPi
@@ -255,7 +283,12 @@ MetronomeVSTAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float>(40.0f, 260.0f, 1.0f),
         120.0f
     ));
-
+    params.push_back(std::make_unique<juce::AudioParameterChoice>(
+        "subdivision",
+        "Subdivision",
+        juce::StringArray { "1/4", "1/8", "1/16", "1/8T" },
+        0
+    ));
     return { params.begin(), params.end() };
 }
 

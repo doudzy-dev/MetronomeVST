@@ -31,7 +31,27 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
         "bpm",
         bpmSlider
     );
-    setSize (300, 250);
+
+    subdivisionLabel.setText("Subdivision", juce::dontSendNotification);
+    subdivisionLabel.setJustificationType(juce::Justification::centred);
+
+    subdivisionBox.addItem("1/4", 1);
+    subdivisionBox.addItem("1/8", 2);
+    subdivisionBox.addItem("1/16", 3);
+    subdivisionBox.addItem("1/8T", 4);
+
+    addAndMakeVisible(subdivisionLabel);
+    addAndMakeVisible(subdivisionBox);
+
+    subdivisionAttachment = std::make_unique<ComboBoxAttachment>(
+        audioProcessor.parameters,
+        "subdivision",
+        subdivisionBox
+    );
+
+
+
+    setSize (300, 360);
 
     startTimerHz(60);
 }
@@ -49,9 +69,9 @@ void MetronomeVSTAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.fillAll(juce::Colours::black);
 
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (15.0f));
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    //g.setColour (juce::Colours::white);
+    //g.setFont (juce::FontOptions (15.0f));
+    //g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 
 
     auto ledBounds = juce::Rectangle<float>(110.0f, 20.0f, 80.0f, 80.0f);
@@ -82,6 +102,9 @@ void MetronomeVSTAudioProcessorEditor::resized()
     // subcomponents in your editor..
     bpmLabel.setBounds(0, 105, getWidth(), 30);
     bpmSlider.setBounds(75, 135, 150, 150);
+    subdivisionLabel.setBounds(0, 225, getWidth(), 25);
+    subdivisionBox.setBounds(95, 255, 110, 30);
+    
 }
 void MetronomeVSTAudioProcessorEditor::timerCallback()
 {
