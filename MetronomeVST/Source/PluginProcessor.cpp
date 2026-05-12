@@ -136,16 +136,31 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 juce::ScopedNoDenormals noDenormals;
     buffer.clear();
 
+    if (auto* playHead = getPlayHead())
+    {
+        if (auto position = playHead->getPosition())
+        {
+            if (position->getBpm().hasValue())
+                hostBpm = *position->getBpm();
+
+            isPlaying = position->getIsPlaying();
+
+            if (position->getPpqPosition().hasValue())
+                ppqPosition = *position->getPpqPosition();
+        }
+    }
     const int numSamples = buffer.getNumSamples();
     const int numChannels = buffer.getNumChannels();
 
-    const float currentBpm = parameters.getRawParameterValue("bpm")->load();
-    const int samplesPerBeat = static_cast<int>((60.0f / currentBpm) * sampleRate);
+    const int samplesPerBeat =
+        static_cast<int>((60.0 / hostBpm) * sampleRate);
 
     const int clickLengthSamples = static_cast<int>(0.03 * sampleRate); // 30 ms
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
+        if (!isPlaying)
+            continue;
         if (samplesUntilNextClick <= 0)
         {
             clickSamplesRemaining = clickLengthSamples;

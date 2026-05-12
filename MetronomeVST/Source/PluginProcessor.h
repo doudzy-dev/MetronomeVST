@@ -69,4 +69,8 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     int beatCounter = 0;
 
     float clickPhase = 0.0f;
+
+    bool isPlaying = false;
+    double hostBpm = 120.0;
+    double ppqPosition = 0.0;
 };
