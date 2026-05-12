@@ -24,6 +24,14 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
+
+
+    juce::Slider bpmSlider;
+    juce::Label bpmLabel;
+
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<SliderAttachment> bpmAttachment;
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

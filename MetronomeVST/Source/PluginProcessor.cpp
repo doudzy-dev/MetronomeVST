@@ -13,13 +13,8 @@
 MetronomeVSTAudioProcessor::MetronomeVSTAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
+                     .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
+       parameters (*this, nullptr, "PARAMETERS", createParameterLayout())
 #endif
 {
 }
@@ -96,7 +91,7 @@ void MetronomeVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPe
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     // sampleRate = sr;
-    bpm = 120.0;
+    //bpm = 120.0;
 
     samplesUntilNextClick = 0;
     clickSamplesRemaining = 0;
@@ -144,7 +139,9 @@ juce::ScopedNoDenormals noDenormals;
     const int numSamples = buffer.getNumSamples();
     const int numChannels = buffer.getNumChannels();
 
-    const int samplesPerBeat = static_cast<int>((60.0 / bpm) * sampleRate);
+    const float currentBpm = parameters.getRawParameterValue("bpm")->load();
+    const int samplesPerBeat = static_cast<int>((60.0f / currentBpm) * sampleRate);
+
     const int clickLengthSamples = static_cast<int>(0.03 * sampleRate); // 30 ms
 
     for (int sample = 0; sample < numSamples; ++sample)
@@ -214,4 +211,24 @@ void MetronomeVSTAudioProcessor::setStateInformation (const void* data, int size
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new MetronomeVSTAudioProcessor();
+}
+
+
+
+
+
+juce::AudioProcessorValueTreeState::ParameterLayout
+
+MetronomeVSTAudioProcessor::createParameterLayout()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "bpm",
+        "BPM",
+        juce::NormalisableRange<float>(40.0f, 260.0f, 1.0f),
+        120.0f
+    ));
+
+    return { params.begin(), params.end() };
 }

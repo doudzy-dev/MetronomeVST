@@ -15,7 +15,7 @@
 */
 class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
 {
-public:
+  public:
     //==============================================================================
     MetronomeVSTAudioProcessor();
     ~MetronomeVSTAudioProcessor() override;
@@ -52,13 +52,17 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    
+    //==============================================================================
+    juce::AudioProcessorValueTreeState parameters;
+    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-private:
+  private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessor)
 
     double sampleRate = 44100.0;
-    double bpm = 120.0;
+    //double bpm = 120.0;
 
     int samplesUntilNextClick = 0;
     int clickSamplesRemaining = 0;
