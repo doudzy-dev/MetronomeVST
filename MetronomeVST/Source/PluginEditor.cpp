@@ -16,7 +16,6 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
-
     bpmLabel.setText("BPM", juce::dontSendNotification);
     bpmLabel.setJustificationType(juce::Justification::centred);
 
@@ -35,7 +34,6 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     setSize (300, 250);
 
     startTimerHz(60);
-    
 }
 
 MetronomeVSTAudioProcessorEditor::~MetronomeVSTAudioProcessorEditor()

@@ -243,16 +243,6 @@ void MetronomeVSTAudioProcessor::setStateInformation (const void* data, int size
 }
 
 //==============================================================================
-// This creates new instances of the plugin..
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
-    return new MetronomeVSTAudioProcessor();
-}
-
-
-
-
-
 juce::AudioProcessorValueTreeState::ParameterLayout
 
 MetronomeVSTAudioProcessor::createParameterLayout()
@@ -267,4 +257,11 @@ MetronomeVSTAudioProcessor::createParameterLayout()
     ));
 
     return { params.begin(), params.end() };
+}
+
+//==============================================================================
+// This creates new instances of the plugin..
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+{
+    return new MetronomeVSTAudioProcessor();
 }
