@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-
+#include <atomic>
 //==============================================================================
 /**
 */
@@ -56,6 +56,9 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     //==============================================================================
     juce::AudioProcessorValueTreeState parameters;
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+    std::atomic<bool> beatFlash { false };
+    std::atomic<int> displayedBeat { 0 };
 
   private:
     //==============================================================================

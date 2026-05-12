@@ -9,12 +9,14 @@
 #pragma once
 
 #include <JuceHeader.h>
+
+
 #include "PluginProcessor.h"
 
 //==============================================================================
 /**
 */
-class MetronomeVSTAudioProcessorEditor  : public juce::AudioProcessorEditor
+class MetronomeVSTAudioProcessorEditor  : public juce::AudioProcessorEditor,private juce::Timer
 {
 public:
     MetronomeVSTAudioProcessorEditor (MetronomeVSTAudioProcessor&);
@@ -31,6 +33,12 @@ public:
 
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     std::unique_ptr<SliderAttachment> bpmAttachment;
+
+    void timerCallback() override;
+
+    bool ledOn = false;
+    int ledCounter = 0;
+    int currentDisplayedBeat = 0;
 
 private:
     // This reference is provided as a quick way for your editor to

@@ -181,6 +181,9 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
             currentBeatInBar = beat % 4;
 
+            displayedBeat.store(currentBeatInBar);
+            beatFlash.store(true);
+
             clickSamplesRemaining = clickLengthSamples;
             clickPhase = 0.0f;
         }
