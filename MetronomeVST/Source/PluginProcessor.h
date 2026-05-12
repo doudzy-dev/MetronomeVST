@@ -64,10 +64,14 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     double sampleRate = 44100.0;
     //double bpm = 120.0;
 
-    int samplesUntilNextClick = 0;
-    int clickSamplesRemaining = 0;
-    int beatCounter = 0;
+    //int samplesUntilNextClick = 0;
+    //int clickSamplesRemaining = 0;
+    //int beatCounter = 0;
+    //float clickPhase = 0.0f;
 
+    int lastBeat = -1;
+    int currentBeatInBar = 0;
+    int clickSamplesRemaining = 0;
     float clickPhase = 0.0f;
 
     bool isPlaying = false;

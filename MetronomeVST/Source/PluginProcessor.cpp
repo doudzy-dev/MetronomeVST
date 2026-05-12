@@ -86,16 +86,19 @@ void MetronomeVSTAudioProcessor::changeProgramName (int index, const juce::Strin
 }
 
 //==============================================================================
-void MetronomeVSTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void MetronomeVSTAudioProcessor::prepareToPlay (double sr, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     // sampleRate = sr;
     //bpm = 120.0;
 
-    samplesUntilNextClick = 0;
+    sampleRate = sr;
+
+    lastBeat = -1;
+    currentBeatInBar = 0;
+
     clickSamplesRemaining = 0;
-    beatCounter = 0;
     clickPhase = 0.0f;
 }
 
@@ -133,7 +136,7 @@ bool MetronomeVSTAudioProcessor::isBusesLayoutSupported (const BusesLayout& layo
 
 void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-juce::ScopedNoDenormals noDenormals;
+    juce::ScopedNoDenormals noDenormals;
     buffer.clear();
 
     if (auto* playHead = getPlayHead())
@@ -149,24 +152,36 @@ juce::ScopedNoDenormals noDenormals;
                 ppqPosition = *position->getPpqPosition();
         }
     }
+
     const int numSamples = buffer.getNumSamples();
     const int numChannels = buffer.getNumChannels();
 
-    const int samplesPerBeat =
-        static_cast<int>((60.0 / hostBpm) * sampleRate);
+    const int clickLengthSamples = static_cast<int>(0.03 * sampleRate);
 
-    const int clickLengthSamples = static_cast<int>(0.03 * sampleRate); // 30 ms
+    if (!isPlaying)
+    {
+        lastBeat = -1;
+        clickSamplesRemaining = 0;
+        return;
+    }
+
+    const double ppqPerSample =
+        hostBpm / 60.0 / sampleRate;
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
-        if (!isPlaying)
-            continue;
-        if (samplesUntilNextClick <= 0)
-        {
-            clickSamplesRemaining = clickLengthSamples;
-            samplesUntilNextClick = samplesPerBeat;
+        const double currentPpq =
+            ppqPosition + static_cast<double>(sample) * ppqPerSample;
 
-            beatCounter = (beatCounter + 1) % 4;
+        const int beat = static_cast<int>(std::floor(currentPpq));
+
+        if (beat != lastBeat)
+        {
+            lastBeat = beat;
+
+            currentBeatInBar = beat % 4;
+
+            clickSamplesRemaining = clickLengthSamples;
             clickPhase = 0.0f;
         }
 
@@ -174,16 +189,21 @@ juce::ScopedNoDenormals noDenormals;
 
         if (clickSamplesRemaining > 0)
         {
-            const bool isAccent = beatCounter == 1;
+            const bool isAccent = currentBeatInBar == 0;
 
             const float frequency = isAccent ? 1800.0f : 1000.0f;
             const float amplitude = isAccent ? 0.8f : 0.45f;
 
             click = std::sin(clickPhase) * amplitude;
 
-            clickPhase += juce::MathConstants<float>::twoPi * frequency / static_cast<float>(sampleRate);
+            clickPhase += juce::MathConstants<float>::twoPi
+                        * frequency
+                        / static_cast<float>(sampleRate);
 
-            const float fade = static_cast<float>(clickSamplesRemaining) / static_cast<float>(clickLengthSamples);
+            const float fade =
+                static_cast<float>(clickSamplesRemaining)
+                / static_cast<float>(clickLengthSamples);
+
             click *= fade;
 
             --clickSamplesRemaining;
@@ -191,8 +211,6 @@ juce::ScopedNoDenormals noDenormals;
 
         for (int channel = 0; channel < numChannels; ++channel)
             buffer.setSample(channel, sample, click);
-
-        --samplesUntilNextClick;
     }
 }
 
