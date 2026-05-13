@@ -23,7 +23,7 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     bpmSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 80, 25);
     bpmSlider.setRange(40.0, 260.0, 1.0);
 
-    addAndMakeVisible(bpmLabel);
+    //addAndMakeVisible(bpmLabel);
     //addAndMakeVisible(bpmSlider);
 
     bpmAttachment = std::make_unique<SliderAttachment>(
@@ -55,7 +55,7 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
 
     addAndMakeVisible(timerLabel);
 
-    setSize (300, 410);
+    setSize (300, 250);
 
     startTimerHz(60);
 }
@@ -82,9 +82,11 @@ void MetronomeVSTAudioProcessorEditor::paint (juce::Graphics& g)
 
     const bool isAccent = currentDisplayedBeat == 0;
 
-    auto ledColour = ledOn
-        ? (isAccent ? juce::Colours::red : juce::Colours::orange)
-        : juce::Colours::darkgrey;
+    //auto ledColour = ledOn
+    //    ? (isAccent ? juce::Colours::red : juce::Colours::orange)
+    //    : juce::Colours::darkgrey;
+
+    auto ledColour = juce::Colours::darkgrey;
 
     g.setColour(ledColour);
     g.fillEllipse(ledBounds);
@@ -105,10 +107,10 @@ void MetronomeVSTAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     bpmLabel.setBounds(0, 105, getWidth(), 30);
-    bpmSlider.setBounds(75, 135, 150, 150);
-    subdivisionLabel.setBounds(0, 225, getWidth(), 25);
-    subdivisionBox.setBounds(95, 255, 110, 30);
-    timerLabel.setBounds(0, 310, getWidth(), 35);
+    //bpmSlider.setBounds(75, 135, 150, 150);
+    //subdivisionLabel.setBounds(0, 150, getWidth(), 25);
+    subdivisionBox.setBounds(95, 150, 110, 30);
+    timerLabel.setBounds(0, 190, getWidth(), 35);
 }
 void MetronomeVSTAudioProcessorEditor::timerCallback()
 {
