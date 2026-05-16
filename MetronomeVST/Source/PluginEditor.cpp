@@ -39,6 +39,7 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     subdivisionBox.addItem("1/8", 2);
     subdivisionBox.addItem("1/16", 3);
     subdivisionBox.addItem("1/8T", 4);
+    subdivisionBox.addItem("Gallop", 5);
 
     addAndMakeVisible(subdivisionLabel);
     addAndMakeVisible(subdivisionBox);

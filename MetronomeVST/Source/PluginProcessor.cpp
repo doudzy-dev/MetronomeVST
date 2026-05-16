@@ -192,6 +192,7 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         case 1: subdivisionsPerBeat = 2.0; break; // croches
         case 2: subdivisionsPerBeat = 4.0; break; // doubles
         case 3: subdivisionsPerBeat = 3.0; break; // triolets
+        case 4: subdivisionsPerBeat = 4.0; break; // gallop = grille double-croche
         default: subdivisionsPerBeat = 1.0; break;
     }    
     
@@ -207,19 +208,36 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         {
             lastSubdivision = subdivision;
 
-            const int beat =
-                static_cast<int>(std::floor(currentPpq));
+            const int beat = static_cast<int>(std::floor(currentPpq));
 
             currentBeatInBar = beat % 4;
 
             currentSubdivisionInBar =
                 subdivision % static_cast<int>(4 * subdivisionsPerBeat);
 
-            displayedBeat.store(currentBeatInBar);
-            beatFlash.store(true);
+            const bool isGallopMode = subdivisionChoice == 4;
 
-            clickSamplesRemaining = clickLengthSamples;
-            clickPhase = 0.0f;
+            bool shouldClick = true;
+
+            if (isGallopMode)
+            {
+                const int stepInBeat =
+                    subdivision % static_cast<int>(subdivisionsPerBeat);
+
+                // Gallop classique : 1 --- & a
+                // Sur une grille 1 e & a : on joue 1, &, a
+                // Si tu veux version Iron Maiden stricte, garde 0,2,3.
+                shouldClick = stepInBeat == 0 || stepInBeat == 2 || stepInBeat == 3;
+            }
+
+            if (shouldClick)
+            {
+                displayedBeat.store(currentBeatInBar);
+                beatFlash.store(true);
+
+                clickSamplesRemaining = clickLengthSamples;
+                clickPhase = 0.0f;
+            }
         }
 
         float click = 0.0f;
@@ -296,7 +314,7 @@ MetronomeVSTAudioProcessor::createParameterLayout()
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         "subdivision",
         "Subdivision",
-        juce::StringArray { "1/4", "1/8", "1/16", "1/8T" },
+        juce::StringArray { "1/4", "1/8", "1/16", "1/8T", "Gallop" },
         0
     ));
     return { params.begin(), params.end() };
