@@ -106,6 +106,8 @@ void MetronomeVSTAudioProcessor::prepareToPlay (double sr, int samplesPerBlock)
     elapsedSamples = 0;
     wasPlaying = false;
     elapsedSeconds.store(0.0);
+
+    internalPpqPosition = 0.0;
 }
 
 void MetronomeVSTAudioProcessor::releaseResources()
@@ -164,7 +166,12 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     const int clickLengthSamples = static_cast<int>(0.03 * sampleRate);
     if (isPlaying && !wasPlaying)
+    {
         elapsedSamples = 0;
+        internalPpqPosition = 0.0;
+        lastBeat = -1;
+        lastSubdivision = -1;
+    }
 
     wasPlaying = isPlaying;
     if (!isPlaying)
@@ -177,21 +184,32 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     }
     elapsedSamples += numSamples;
     elapsedSeconds.store(static_cast<double>(elapsedSamples) / sampleRate);
-    const double ppqPerSample =
-        hostBpm / 60.0 / sampleRate;
 
+    const double ppqPerSample = hostBpm / 60.0 / sampleRate;
 
     const int subdivisionChoice =
     static_cast<int>(parameters.getRawParameterValue("subdivision")->load());
+//
+    //const auto pattern = getPatternForMode(subdivisionChoice);
+//
+    //const int stepsPerBeat = pattern.stepsPerBeat;
+    //const double subdivisionsPerBeat = static_cast<double>(stepsPerBeat);
+    //const int beatsPerBar = static_cast<int>(parameters.getRawParameterValue("beatsPerBar")->load());
+    
 
-    
-    const int stepsPerBeat = getStepsPerBeatForMode(subdivisionChoice);
-    const double subdivisionsPerBeat = static_cast<double>(stepsPerBeat); 
-    
+    /*-----------------------------------------------------------------------------------------------*/
+    const int beatsPerBar =
+    static_cast<int>(parameters.getRawParameterValue("beatsPerBar")->load());
+
+    const auto pattern = getPatternForMode(subdivisionChoice);
+
+    const int stepsPerBeat = pattern.stepsPerBeat;
+    const double subdivisionsPerBeat = static_cast<double>(stepsPerBeat);
+    /*-----------------------------------------------------------------------------------------------*/
     for (int sample = 0; sample < numSamples; ++sample)
     {
         const double currentPpq =
-            ppqPosition + static_cast<double>(sample) * ppqPerSample;
+            internalPpqPosition + static_cast<double>(sample) * ppqPerSample;
 
         const int subdivision =
             static_cast<int>(std::floor(currentPpq * subdivisionsPerBeat));
@@ -202,15 +220,15 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
             const int beat = static_cast<int>(std::floor(currentPpq));
 
-            currentBeatInBar = beat % 4;
+            currentBeatInBar = beat % beatsPerBar;
 
-            currentSubdivisionInBar =
-                subdivision % static_cast<int>(4 * subdivisionsPerBeat);
+            currentSubdivisionInBar = subdivision % static_cast<int>(beatsPerBar * subdivisionsPerBeat);
 
-            const int stepInBeat = subdivision % stepsPerBeat;
+            const int stepInPattern =
+                subdivision % static_cast<int>(pattern.steps.size());
 
             const bool shouldClick =
-                shouldTriggerPatternStep(subdivisionChoice, stepInBeat);
+                pattern.steps[stepInPattern];
 
             if (shouldClick)
             {
@@ -253,6 +271,7 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         for (int channel = 0; channel < numChannels; ++channel)
             buffer.setSample(channel, sample, click);
     }
+    internalPpqPosition += static_cast<double>(numSamples) * ppqPerSample;
 }
 
 //==============================================================================
@@ -299,58 +318,48 @@ MetronomeVSTAudioProcessor::createParameterLayout()
         juce::StringArray { "1/4", "1/8", "1/16", "1/8T", "Gallop", "Reverse Gallop"},
         0
     ));
+    params.push_back(std::make_unique<juce::AudioParameterInt>(
+        "beatsPerBar",
+        "Beats Per Bar",
+        1,
+        12,
+        4
+    ));
     return { params.begin(), params.end() };
 }
 
-bool MetronomeVSTAudioProcessor::shouldTriggerPatternStep(int subdivisionChoice,
-                                                             int stepInBeat)
+MetronomeVSTAudioProcessor::RhythmPattern
+
+MetronomeVSTAudioProcessor::getPatternForMode(int subdivisionChoice)
 {
     switch (subdivisionChoice)
     {
         case 0: // 1/4
-            return stepInBeat == 0;
+            return { 1, { true } };
 
         case 1: // 1/8
-            return stepInBeat == 0 || stepInBeat == 1;
+            return { 2, { true, true } };
 
         case 2: // 1/16
-            return true;
+            return { 4, { true, true, true, true } };
 
         case 3: // 1/8T
-            return true;
+            return { 3, { true, true, true } };
 
-        case 4: // Gallop: 1 e & a = X . X X
-        {
-            static constexpr bool pattern[4] = {
-                true, false, true, true
-            };
+        case 4: // Gallop: X . X X
+            return { 4, { true, false, true, true } };
 
-            return pattern[stepInBeat % 4];
-        }
-        case 5:
-        {
-            static constexpr bool pattern[4] = {
-                true, true, true, false
-            };
+        case 5: // Reverse gallop: X X . X
+            return { 4, { true, true, false, true } };
 
-            return pattern[stepInBeat % 4];
-        }
+        case 6: // Pattern 5 steps
+            return { 4, { true, false, true, false, true } };
+
+        case 7: // Pattern 7 steps
+            return { 4, { true, false, true, true, false, true, false } };
+
         default:
-            return stepInBeat == 0;
-    }
-}
-
-int MetronomeVSTAudioProcessor::getStepsPerBeatForMode(int subdivisionChoice)
-{
-    switch (subdivisionChoice)
-    {
-        case 0: return 1; // 1/4
-        case 1: return 2; // 1/8
-        case 2: return 4; // 1/16
-        case 3: return 3; // 1/8T
-        case 4: return 4; // Gallop
-        case 5: return 4; // Gallop
-        default: return 1;
+            return { 1, { true } };
     }
 }
 

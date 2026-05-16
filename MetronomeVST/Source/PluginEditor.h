@@ -43,6 +43,12 @@ public:
 
     juce::Label timerLabel;
 
+
+    juce::Slider beatsPerBarSlider;
+    juce::Label beatsPerBarLabel;
+
+    std::unique_ptr<SliderAttachment> beatsPerBarAttachment;
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

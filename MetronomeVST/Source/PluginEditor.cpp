@@ -57,7 +57,25 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
 
     addAndMakeVisible(timerLabel);
 
-    setSize (300, 250);
+
+    beatsPerBarLabel.setText("Beats / Bar", juce::dontSendNotification);
+    beatsPerBarLabel.setJustificationType(juce::Justification::centred);
+
+    beatsPerBarSlider.setSliderStyle(juce::Slider::LinearHorizontal);
+    beatsPerBarSlider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 50, 25);
+    beatsPerBarSlider.setRange(1, 12, 1);
+
+    addAndMakeVisible(beatsPerBarLabel);
+    addAndMakeVisible(beatsPerBarSlider);
+
+    beatsPerBarAttachment = std::make_unique<SliderAttachment>(
+        audioProcessor.parameters,
+        "beatsPerBar",
+        beatsPerBarSlider
+    );
+
+
+    setSize (300, 350);
 
     startTimerHz(60);
 }
@@ -102,8 +120,9 @@ void MetronomeVSTAudioProcessorEditor::paint (juce::Graphics& g)
         ledBounds.toNearestInt(),
         juce::Justification::centred
     );
+    juce::String(currentDisplayedBeat + 1);
 }
-
+//fake
 void MetronomeVSTAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
@@ -112,8 +131,17 @@ void MetronomeVSTAudioProcessorEditor::resized()
     //bpmSlider.setBounds(75, 135, 150, 150);
     //subdivisionLabel.setBounds(0, 150, getWidth(), 25);
     subdivisionBox.setBounds(95, 150, 110, 30);
-    timerLabel.setBounds(0, 190, getWidth(), 35);
+    
+    beatsPerBarLabel.setBounds(0, 295, getWidth(), 25);
+    beatsPerBarSlider.setBounds(40, 325, 220, 30);
+    
+    beatsPerBarLabel.setBounds(0, 190, getWidth(), 25);
+    beatsPerBarSlider.setBounds(40, 220, 220, 30);
+    
+    timerLabel.setBounds(0, 235, getWidth(), 35);
 }
+
+
 void MetronomeVSTAudioProcessorEditor::timerCallback()
 {
     if (audioProcessor.beatFlash.exchange(false))

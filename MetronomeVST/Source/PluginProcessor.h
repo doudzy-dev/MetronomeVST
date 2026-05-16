@@ -67,9 +67,17 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     bool wasPlaying = false;
 
 
+    struct RhythmPattern
+    {
+        int stepsPerBeat;
+        std::vector<bool> steps;
+    };
+
+    RhythmPattern getPatternForMode(int subdivisionChoice);
+
     bool shouldTriggerPatternStep(int subdivisionChoice, int stepInBeat);
     int getStepsPerBeatForMode(int subdivisionChoice);
-  
+    int currentStepInPattern = 0;
   private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessor)
@@ -90,4 +98,5 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     bool isPlaying = false;
     double hostBpm = 120.0;
     double ppqPosition = 0.0;
+    double internalPpqPosition = 0.0;
 };
