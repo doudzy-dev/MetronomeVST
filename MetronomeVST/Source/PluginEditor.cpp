@@ -40,8 +40,9 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     subdivisionBox.addItem("1/16", 3);
     subdivisionBox.addItem("1/8T", 4);
     subdivisionBox.addItem("Gallop", 5);
-
+    subdivisionBox.addItem("Reverse Gallop", 6);
     addAndMakeVisible(subdivisionLabel);
+
     addAndMakeVisible(subdivisionBox);
 
     subdivisionAttachment = std::make_unique<ComboBoxAttachment>(

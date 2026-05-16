@@ -184,17 +184,9 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     const int subdivisionChoice =
     static_cast<int>(parameters.getRawParameterValue("subdivision")->load());
 
-    double subdivisionsPerBeat = 1.0;
-
-    switch (subdivisionChoice)
-    {
-        case 0: subdivisionsPerBeat = 1.0; break; // noires
-        case 1: subdivisionsPerBeat = 2.0; break; // croches
-        case 2: subdivisionsPerBeat = 4.0; break; // doubles
-        case 3: subdivisionsPerBeat = 3.0; break; // triolets
-        case 4: subdivisionsPerBeat = 4.0; break; // gallop = grille double-croche
-        default: subdivisionsPerBeat = 1.0; break;
-    }    
+    
+    const int stepsPerBeat = getStepsPerBeatForMode(subdivisionChoice);
+    const double subdivisionsPerBeat = static_cast<double>(stepsPerBeat); 
     
     for (int sample = 0; sample < numSamples; ++sample)
     {
@@ -215,20 +207,10 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             currentSubdivisionInBar =
                 subdivision % static_cast<int>(4 * subdivisionsPerBeat);
 
-            const bool isGallopMode = subdivisionChoice == 4;
+            const int stepInBeat = subdivision % stepsPerBeat;
 
-            bool shouldClick = true;
-
-            if (isGallopMode)
-            {
-                const int stepInBeat =
-                    subdivision % static_cast<int>(subdivisionsPerBeat);
-
-                // Gallop classique : 1 --- & a
-                // Sur une grille 1 e & a : on joue 1, &, a
-                // Si tu veux version Iron Maiden stricte, garde 0,2,3.
-                shouldClick = stepInBeat == 0 || stepInBeat == 2 || stepInBeat == 3;
-            }
+            const bool shouldClick =
+                shouldTriggerPatternStep(subdivisionChoice, stepInBeat);
 
             if (shouldClick)
             {
@@ -314,10 +296,62 @@ MetronomeVSTAudioProcessor::createParameterLayout()
     params.push_back(std::make_unique<juce::AudioParameterChoice>(
         "subdivision",
         "Subdivision",
-        juce::StringArray { "1/4", "1/8", "1/16", "1/8T", "Gallop" },
+        juce::StringArray { "1/4", "1/8", "1/16", "1/8T", "Gallop", "Reverse Gallop"},
         0
     ));
     return { params.begin(), params.end() };
+}
+
+bool MetronomeVSTAudioProcessor::shouldTriggerPatternStep(int subdivisionChoice,
+                                                             int stepInBeat)
+{
+    switch (subdivisionChoice)
+    {
+        case 0: // 1/4
+            return stepInBeat == 0;
+
+        case 1: // 1/8
+            return stepInBeat == 0 || stepInBeat == 1;
+
+        case 2: // 1/16
+            return true;
+
+        case 3: // 1/8T
+            return true;
+
+        case 4: // Gallop: 1 e & a = X . X X
+        {
+            static constexpr bool pattern[4] = {
+                true, false, true, true
+            };
+
+            return pattern[stepInBeat % 4];
+        }
+        case 5:
+        {
+            static constexpr bool pattern[4] = {
+                true, true, true, false
+            };
+
+            return pattern[stepInBeat % 4];
+        }
+        default:
+            return stepInBeat == 0;
+    }
+}
+
+int MetronomeVSTAudioProcessor::getStepsPerBeatForMode(int subdivisionChoice)
+{
+    switch (subdivisionChoice)
+    {
+        case 0: return 1; // 1/4
+        case 1: return 2; // 1/8
+        case 2: return 4; // 1/16
+        case 3: return 3; // 1/8T
+        case 4: return 4; // Gallop
+        case 5: return 4; // Gallop
+        default: return 1;
+    }
 }
 
 //==============================================================================

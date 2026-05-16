@@ -65,6 +65,11 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     std::atomic<double> elapsedSeconds { 0.0 };
     int64_t elapsedSamples = 0;
     bool wasPlaying = false;
+
+
+    bool shouldTriggerPatternStep(int subdivisionChoice, int stepInBeat);
+    int getStepsPerBeatForMode(int subdivisionChoice);
+  
   private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessor)
