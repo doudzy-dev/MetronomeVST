@@ -205,7 +205,6 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     const int stepsPerBeat = pattern.stepsPerBeat;
     const double subdivisionsPerBeat = static_cast<double>(stepsPerBeat);
-    /*-----------------------------------------------------------------------------------------------*/
     for (int sample = 0; sample < numSamples; ++sample)
     {
         const double currentPpq =
