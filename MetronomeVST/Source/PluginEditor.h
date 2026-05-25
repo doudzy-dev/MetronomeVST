@@ -54,4 +54,22 @@ private:
     // access the processor object that created it.
     MetronomeVSTAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessorEditor)
+
+    juce::ImageButton noireButton;
+    juce::ImageButton crochesButton;
+    juce::ImageButton dcrochesButton;
+    juce::ImageButton trioletButton;
+    juce::ImageButton sextoletButton;
+    juce::ImageButton gallopButton;
+    juce::ImageButton rgallopButton;
+
+    juce::Image noireNormal;
+    juce::Image crochesNormal;
+    juce::Image dcrochesNormal;
+    juce::Image trioletNormal;
+    juce::Image sextoletNormal;
+    juce::Image gallopNormal;
+    juce::Image rgallopNormal;
+
+
 };

@@ -75,7 +75,82 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     );
 
 
-    setSize (300, 350);
+
+    noireNormal = juce::ImageCache::getFromMemory(BinaryData::noire_png,
+                                             BinaryData::noire_pngSize);
+    crochesNormal = juce::ImageCache::getFromMemory(BinaryData::croches_png,
+                                             BinaryData::croches_pngSize);
+    dcrochesNormal = juce::ImageCache::getFromMemory(BinaryData::doubleCroches_png,
+                                             BinaryData::doubleCroches_pngSize);
+    trioletNormal = juce::ImageCache::getFromMemory(BinaryData::triolet_png,
+                                             BinaryData::triolet_pngSize);                                      
+    sextoletNormal = juce::ImageCache::getFromMemory(BinaryData::sextolet_png,
+                                             BinaryData::sextolet_pngSize);
+    gallopNormal = juce::ImageCache::getFromMemory(BinaryData::galop_png,
+                                             BinaryData::galop_pngSize);
+    rgallopNormal = juce::ImageCache::getFromMemory(BinaryData::rgalop_png,
+                                             BinaryData::rgalop_pngSize);                                      
+                                          
+    noireButton.setImages(
+        false, true, true,
+        noireNormal, 1.0f, juce::Colours::white,
+        noireNormal, 0.8f, juce::Colours::white,
+        noireNormal, 0.6f, juce::Colours::white
+    );
+    crochesButton.setImages(
+        false, true, true,
+        crochesNormal, 1.0f, juce::Colours::white,
+        crochesNormal, 0.8f, juce::Colours::white,
+        crochesNormal, 0.6f, juce::Colours::white
+    );
+    dcrochesButton.setImages(
+        false, true, true,
+        dcrochesNormal, 1.0f, juce::Colours::white,
+        dcrochesNormal, 0.8f, juce::Colours::white,
+        dcrochesNormal, 0.6f, juce::Colours::white
+    );
+    trioletButton.setImages(
+        false, true, true,
+        trioletNormal, 1.0f, juce::Colours::white,
+        trioletNormal, 0.8f, juce::Colours::white,
+        trioletNormal, 0.6f, juce::Colours::white
+    );
+    gallop.setImages(
+        false, true, true,
+        crochesNormal, 1.0f, juce::Colours::white,
+        crochesNormal, 0.8f, juce::Colours::white,
+        crochesNormal, 0.6f, juce::Colours::white
+    );
+    rgalopButton.setImages(
+        false, true, true,
+        dcrochesNormal, 1.0f, juce::Colours::white,
+        dcrochesNormal, 0.8f, juce::Colours::white,
+        dcrochesNormal, 0.6f, juce::Colours::white
+    );
+    sextoletButton.setImages(
+        false, true, true,
+        sextoletNormal, 1.0f, juce::Colours::white,
+        sextoletNormal, 0.8f, juce::Colours::white,
+        sextoletNormal, 0.6f, juce::Colours::white
+    );
+    
+    addAndMakeVisible(noireButton);
+    addAndMakeVisible(crochesButton);
+    addAndMakeVisible(trioletButton);
+    addAndMakeVisible(dcrochesButton);
+    addAndMakeVisible(gallopButton);
+    addAndMakeVisible(rgallopButton);
+    addAndMakeVisible(sextoletButton);
+    
+
+
+    noireButton.onClick = [this]()
+    {
+        addAndMakeVisible(bpmLabel);
+    };
+
+    //setSize (300, 350);
+    setSize (300, 400);
 
     startTimerHz(60);
 }
@@ -139,6 +214,14 @@ void MetronomeVSTAudioProcessorEditor::resized()
     beatsPerBarSlider.setBounds(40, 220, 220, 30);
     
     timerLabel.setBounds(0, 235, getWidth(), 35);
+
+    noireButton.setBounds(10, 300, 100, 50);
+    crochesButton.setBounds(60, 300, 100, 50);
+    trioletButton.setBounds(120, 300, 100, 50);
+    dcrochesButton.setBounds(180, 300, 100, 50);
+    gallopButton.setBounds(10, 350, 100, 50);
+    rgallopButton.setBounds(70, 350, 100, 50);
+    sextoletButton.setBounds(130, 350, 100, 50);
 }
 
 
