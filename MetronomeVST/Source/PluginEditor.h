@@ -22,7 +22,8 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-
+    void paintButtons(int currentActive);
+    void paintButtons(juce::ImageButton button);
     juce::Slider bpmSlider;
     juce::Label bpmLabel;
 
@@ -63,13 +64,13 @@ private:
     juce::ImageButton gallopButton;
     juce::ImageButton rgallopButton;
 
-    juce::Image noireNormal;
-    juce::Image crochesNormal;
-    juce::Image dcrochesNormal;
-    juce::Image trioletNormal;
-    juce::Image sextoletNormal;
-    juce::Image gallopNormal;
-    juce::Image rgallopNormal;
+    juce::Image noireImage;
+    juce::Image crochesImage;
+    juce::Image dcrochesImage;
+    juce::Image trioletImage;
+    juce::Image sextoletImage;
+    juce::Image gallopImage;
+    juce::Image rgallopImage;
 
 
 };
