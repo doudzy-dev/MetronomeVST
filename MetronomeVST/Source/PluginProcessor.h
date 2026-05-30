@@ -76,7 +76,9 @@ class MetronomeVSTAudioProcessor  : public juce::AudioProcessor
     bool shouldTriggerPatternStep(int subdivisionChoice, int stepInBeat);
     int getStepsPerBeatForMode(int subdivisionChoice);
     int currentStepInPattern = 0;
-  
+      
+    //juce::AudioProcessorValueTreeState apvts;
+
     private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessor)

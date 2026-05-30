@@ -14,7 +14,8 @@ MetronomeVSTAudioProcessor::MetronomeVSTAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
-       parameters (*this, nullptr, "PARAMETERS", createParameterLayout())
+       parameters (*this, nullptr, "PARAMETERS", createParameterLayout())//,
+       //apvts(*this, nullptr, "PARAMETERS", createParameterLayout())
 #endif
 {
 }
@@ -187,8 +188,7 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     const double ppqPerSample = hostBpm / 60.0 / sampleRate;
 
-    const int subdivisionChoice =
-    static_cast<int>(parameters.getRawParameterValue("subdivision")->load());
+    
 //
     //const auto pattern = getPatternForMode(subdivisionChoice);
 //
@@ -198,13 +198,19 @@ void MetronomeVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     
 
     /*-----------------------------------------------------------------------------------------------*/
+
+    const int subdivisionChoice =
+    static_cast<int>(parameters.getRawParameterValue("division")->load());
+
     const int beatsPerBar =
     static_cast<int>(parameters.getRawParameterValue("beatsPerBar")->load());
 
     const auto pattern = getPatternForMode(subdivisionChoice);
 
     const int stepsPerBeat = pattern.stepsPerBeat;
+    
     const double subdivisionsPerBeat = static_cast<double>(stepsPerBeat);
+    
     for (int sample = 0; sample < numSamples; ++sample)
     {
         const double currentPpq =
@@ -311,18 +317,24 @@ MetronomeVSTAudioProcessor::createParameterLayout()
         juce::NormalisableRange<float>(40.0f, 260.0f, 1.0f),
         120.0f
     ));
-    params.push_back(std::make_unique<juce::AudioParameterChoice>(
-        "subdivision",
-        "Subdivision",
-        juce::StringArray { "1/4", "1/8", "1/16", "1/8T", "Gallop", "Reverse Gallop"},
-        0
-    ));
+    //params.push_back(std::make_unique<juce::AudioParameterChoice>(
+    //    "subdivision",
+    //    "Subdivision",
+    //    juce::StringArray { "1/4", "1/8", "1/16", "1/8T", "Gallop", "Reverse Gallop"},
+    //    0
+    //));
     params.push_back(std::make_unique<juce::AudioParameterInt>(
         "beatsPerBar",
         "Beats Per Bar",
         1,
         12,
         4
+    ));
+    params.push_back(std::make_unique<juce::AudioParameterChoice>(
+        juce::ParameterID("division", 1),
+        "Division",
+        juce::StringArray { "1/4", "1/8", "1/16", "1/8T", "Gallop", "Reverse Gallop","Sextolet"},
+        0
     ));
     return { params.begin(), params.end() };
 }
@@ -335,28 +347,22 @@ MetronomeVSTAudioProcessor::getPatternForMode(int subdivisionChoice)
     {
         case 0: // 1/4
             return { 1, { true } };
-
         case 1: // 1/8
             return { 2, { true, true } };
-
         case 2: // 1/16
             return { 4, { true, true, true, true } };
-
         case 3: // 1/8T
             return { 3, { true, true, true } };
-
         case 4: // Gallop: X . X X
             return { 4, { true, false, true, true } };
-
         case 5: // Reverse gallop: X X . X
             return { 4, { true, true, false, true } };
-
-        case 6: // Pattern 5 steps
-            return { 4, { true, false, true, false, true } };
-
-        case 7: // Pattern 7 steps
-            return { 4, { true, false, true, true, false, true, false } };
-
+        case 6: // 1/8T
+            return { 6, { true, true, true, true, true, true, } };
+        //case 6: // Pattern 5 steps
+        //    return { 4, { true, false, true, false, true } };
+        //case 7: // Pattern 7 steps
+        //    return { 4, { true, false, true, true, false, true, false } };
         default:
             return { 1, { true } };
     }
