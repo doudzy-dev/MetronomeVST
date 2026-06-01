@@ -9,25 +9,25 @@
 namespace BinaryData
 {
     extern const char*   croches_png;
-    const int            croches_pngSize = 15938;
+    const int            croches_pngSize = 181281;
 
     extern const char*   doubleCroches_png;
-    const int            doubleCroches_pngSize = 2079275;
+    const int            doubleCroches_pngSize = 273058;
 
     extern const char*   galop_png;
-    const int            galop_pngSize = 15217;
+    const int            galop_pngSize = 187457;
 
     extern const char*   noire_png;
-    const int            noire_pngSize = 2063046;
+    const int            noire_pngSize = 222705;
 
     extern const char*   rgalop_png;
-    const int            rgalop_pngSize = 15600;
+    const int            rgalop_pngSize = 188715;
 
     extern const char*   sextolet_png;
-    const int            sextolet_pngSize = 2106036;
+    const int            sextolet_pngSize = 293401;
 
     extern const char*   triolet_png;
-    const int            triolet_pngSize = 20553;
+    const int            triolet_pngSize = 184916;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 7;

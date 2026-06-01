@@ -5,14 +5,6 @@
               pluginCharacteristicsValue="pluginIsSynth">
   <MAINGROUP id="qJQ20l" name="MetronomeVST">
     <GROUP id="{75BB2DC2-D48A-C053-39E2-DA7B1D1D59E3}" name="Source">
-      <FILE id="vafkTX" name="croches.png" compile="0" resource="1" file="img/croches.png"/>
-      <FILE id="IRNJKi" name="doubleCroches.png" compile="0" resource="1"
-            file="img/doubleCroches.png"/>
-      <FILE id="jvFM1w" name="galop.png" compile="0" resource="1" file="img/galop.png"/>
-      <FILE id="cnoqTh" name="noire.png" compile="0" resource="1" file="img/noire.png"/>
-      <FILE id="lpePSX" name="rgalop.png" compile="0" resource="1" file="img/rgalop.png"/>
-      <FILE id="FkOJQu" name="sextolet.png" compile="0" resource="1" file="img/sextolet.png"/>
-      <FILE id="aW0Uce" name="triolet.png" compile="0" resource="1" file="img/triolet.png"/>
       <FILE id="JmKHms" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="MflJUU" name="PluginProcessor.h" compile="0" resource="0"
@@ -21,6 +13,14 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="brMKbP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <FILE id="gaOe1v" name="croches.png" compile="0" resource="1" file="img/croches.png"/>
+    <FILE id="ribr3A" name="doubleCroches.png" compile="0" resource="1"
+          file="img/doubleCroches.png"/>
+    <FILE id="bGy4kF" name="galop.png" compile="0" resource="1" file="img/galop.png"/>
+    <FILE id="rO9GQN" name="noire.png" compile="0" resource="1" file="img/noire.png"/>
+    <FILE id="UmmqK8" name="rgalop.png" compile="0" resource="1" file="img/rgalop.png"/>
+    <FILE id="FlPwm4" name="sextolet.png" compile="0" resource="1" file="img/sextolet.png"/>
+    <FILE id="U2ZoVp" name="triolet.png" compile="0" resource="1" file="img/triolet.png"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

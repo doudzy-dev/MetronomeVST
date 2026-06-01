@@ -3553,9 +3553,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\BinaryData.cpp">
       <Filter>JUCE Library Code</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\BinaryData2.cpp">
-      <Filter>JUCE Library Code</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_audio_basics.cpp">
       <Filter>JUCE Library Code</Filter>
     </ClCompile>
@@ -7659,25 +7656,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\img\croches.png">
-      <Filter>MetronomeVST\Source</Filter>
+      <Filter>MetronomeVST</Filter>
     </None>
     <None Include="..\..\img\doubleCroches.png">
-      <Filter>MetronomeVST\Source</Filter>
+      <Filter>MetronomeVST</Filter>
     </None>
     <None Include="..\..\img\galop.png">
-      <Filter>MetronomeVST\Source</Filter>
+      <Filter>MetronomeVST</Filter>
     </None>
     <None Include="..\..\img\noire.png">
-      <Filter>MetronomeVST\Source</Filter>
+      <Filter>MetronomeVST</Filter>
     </None>
     <None Include="..\..\img\rgalop.png">
-      <Filter>MetronomeVST\Source</Filter>
+      <Filter>MetronomeVST</Filter>
     </None>
     <None Include="..\..\img\sextolet.png">
-      <Filter>MetronomeVST\Source</Filter>
+      <Filter>MetronomeVST</Filter>
     </None>
     <None Include="..\..\img\triolet.png">
-      <Filter>MetronomeVST\Source</Filter>
+      <Filter>MetronomeVST</Filter>
     </None>
     <None Include="..\..\..\..\..\JUCE\modules\juce_audio_devices\native\asio\LICENSE.txt">
       <Filter>JUCE Modules\juce_audio_devices\native\asio</Filter>

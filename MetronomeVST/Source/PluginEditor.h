@@ -7,6 +7,8 @@
 */
 
 #pragma once
+#include <map>
+#include <string>
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
@@ -22,8 +24,9 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-    void paintButtons(int currentActive);
-    void paintButtons(juce::ImageButton button);
+    void paintButtons(std::string currentActive);
+
+    
     juce::Slider bpmSlider;
     juce::Label bpmLabel;
 
@@ -72,5 +75,6 @@ private:
     juce::Image gallopImage;
     juce::Image rgallopImage;
 
-
+    std::map<std::string,juce::Image> map_noteImages;
+    std::map<std::string,juce::ImageButton*> map_imageButtons;    
 };
