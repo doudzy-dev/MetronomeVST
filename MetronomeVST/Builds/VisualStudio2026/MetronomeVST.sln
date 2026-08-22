@@ -2,6 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio Version 18
 
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MetronomeVST - Standalone Plugin", "MetronomeVST_StandalonePlugin.vcxproj", "{CBEC872E-F76D-5FBA-0FCD-74E180EC55C5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B4F2C7B3-5FA5-C56D-A53C-BDCBA1CE3609} = {B4F2C7B3-5FA5-C56D-A53C-BDCBA1CE3609}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MetronomeVST - VST3", "MetronomeVST_VST3.vcxproj", "{9E3966A3-60A3-EC62-45C1-8C5DB7E9957C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B4F2C7B3-5FA5-C56D-A53C-BDCBA1CE3609} = {B4F2C7B3-5FA5-C56D-A53C-BDCBA1CE3609}
@@ -22,6 +27,10 @@ Global
 		{9E3966A3-60A3-EC62-45C1-8C5DB7E9957C}.Debug|x64.Build.0 = Debug|x64
 		{9E3966A3-60A3-EC62-45C1-8C5DB7E9957C}.Release|x64.ActiveCfg = Release|x64
 		{9E3966A3-60A3-EC62-45C1-8C5DB7E9957C}.Release|x64.Build.0 = Release|x64
+		{CBEC872E-F76D-5FBA-0FCD-74E180EC55C5}.Debug|x64.ActiveCfg = Debug|x64
+		{CBEC872E-F76D-5FBA-0FCD-74E180EC55C5}.Debug|x64.Build.0 = Debug|x64
+		{CBEC872E-F76D-5FBA-0FCD-74E180EC55C5}.Release|x64.ActiveCfg = Release|x64
+		{CBEC872E-F76D-5FBA-0FCD-74E180EC55C5}.Release|x64.Build.0 = Release|x64
 		{B4F2C7B3-5FA5-C56D-A53C-BDCBA1CE3609}.Debug|x64.ActiveCfg = Debug|x64
 		{B4F2C7B3-5FA5-C56D-A53C-BDCBA1CE3609}.Debug|x64.Build.0 = Debug|x64
 		{B4F2C7B3-5FA5-C56D-A53C-BDCBA1CE3609}.Release|x64.ActiveCfg = Release|x64

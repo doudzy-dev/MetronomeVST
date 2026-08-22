@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="QHOGic" name="MetronomeVST" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildVST3"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth">
   <MAINGROUP id="qJQ20l" name="MetronomeVST">
     <GROUP id="{75BB2DC2-D48A-C053-39E2-DA7B1D1D59E3}" name="Source">

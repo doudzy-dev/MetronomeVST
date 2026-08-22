@@ -47,7 +47,7 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     //);
 
     timerLabel.setJustificationType(juce::Justification::centred);
-    timerLabel.setFont(juce::Font(24.0f, juce::Font::bold));
+    timerLabel.setFont(juce::Font(40.0f, juce::Font::bold));
     timerLabel.setText("00:00", juce::dontSendNotification);
 
     beatsPerBarLabel.setText("Beats / Bar", juce::dontSendNotification);
@@ -168,8 +168,8 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     
     addAndMakeVisible(timerLabel);
     
-    //addAndMakeVisible(beatsPerBarLabel);
-    //addAndMakeVisible(beatsPerBarSlider);
+    addAndMakeVisible(beatsPerBarLabel);
+    addAndMakeVisible(beatsPerBarSlider);
     
     for (const auto& button : map_imageButtons)
     {
@@ -177,7 +177,7 @@ MetronomeVSTAudioProcessorEditor::MetronomeVSTAudioProcessorEditor (MetronomeVST
     }
 
     //, { "triolet",trioletButton }, { "dcroches",dcrochesButton }, {"gallop",gallopButton}, {"rgallop",rgallopButton}, {"sextolet",sextoletButton} };
-    setSize (380, 360);
+    setSize(535, 455);
     startTimerHz(60);
 }
 
@@ -199,7 +199,7 @@ void MetronomeVSTAudioProcessorEditor::paint (juce::Graphics& g)
     //g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 
 
-    auto ledBounds = juce::Rectangle<float>(150.0f, 20.0f, 80.0f, 80.0f);
+    auto ledBounds = juce::Rectangle<float>(225.0f, 20.0f, 80.0f, 80.0f);
 
     const bool isAccent = currentDisplayedBeat == 0;
 
@@ -226,26 +226,21 @@ void MetronomeVSTAudioProcessorEditor::paint (juce::Graphics& g)
 //fake
 void MetronomeVSTAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
     bpmLabel.setBounds(0, 105, getWidth(), 30);
-    //bpmSlider.setBounds(75, 135, 150, 150);
-    //subdivisionLabel.setBounds(0, 150, getWidth(), 25);
     subdivisionBox.setBounds(95, 150, 110, 30);
     
-    
-    //beatsPerBarLabel.setBounds(0, 190, getWidth(), 25);
-    //beatsPerBarSlider.setBounds(40, 220, 220, 30);
-    
-    timerLabel.setBounds(0, 200, getWidth(), 35);
+    timerLabel.setBounds(0, 150, getWidth(), 40);
 
-    noireButton.setBounds(10, 250, 100, 50);
-    crochesButton.setBounds(90, 250, 100, 50);
-    trioletButton.setBounds(170, 250, 100, 50);
-    dcrochesButton.setBounds(250, 250, 100, 50);
-    gallopButton.setBounds(10, 300, 100, 50);
-    rgallopButton.setBounds(90, 300, 100, 50);
-    sextoletButton.setBounds(170, 300, 100, 50);
+    beatsPerBarLabel.setBounds(0, 200, getWidth(), 25);
+    beatsPerBarSlider.setBounds(160, 220, 220, 30);
+    
+    noireButton.setBounds(10, 250, 128, 128);
+    crochesButton.setBounds(140, 250, 128, 128);
+    trioletButton.setBounds(270, 250, 128, 128);
+    dcrochesButton.setBounds(400, 250, 128, 128);
+    gallopButton.setBounds(10, 340, 128, 128);
+    rgallopButton.setBounds(140, 340, 128, 128);
+    sextoletButton.setBounds(270, 340, 128, 128);
 }
 
 void MetronomeVSTAudioProcessorEditor::paintButtons(std::string currentActive)

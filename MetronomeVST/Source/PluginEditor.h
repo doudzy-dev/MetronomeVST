@@ -17,7 +17,7 @@
 */
 class MetronomeVSTAudioProcessorEditor  : public juce::AudioProcessorEditor,private juce::Timer
 {
-public:
+  public:
     MetronomeVSTAudioProcessorEditor (MetronomeVSTAudioProcessor&);
     ~MetronomeVSTAudioProcessorEditor() override;
 
@@ -26,38 +26,31 @@ public:
     void resized() override;
     void paintButtons(std::string currentActive);
 
-    
-    juce::Slider bpmSlider;
-    juce::Label bpmLabel;
-
-    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-    std::unique_ptr<SliderAttachment> bpmAttachment;
-
     void timerCallback() override;
-
+    
     bool ledOn = false;
     int ledCounter = 0;
     int currentDisplayedBeat = 0;
-
-    juce::ComboBox subdivisionBox;
-    juce::Label subdivisionLabel;
-
+    
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
-    std::unique_ptr<ComboBoxAttachment> subdivisionAttachment;
-
-    juce::Label timerLabel;
-
-
-    juce::Slider beatsPerBarSlider;
-    juce::Label beatsPerBarLabel;
-
-    std::unique_ptr<SliderAttachment> beatsPerBarAttachment;
-
-private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
+    
+  private:
     MetronomeVSTAudioProcessor& audioProcessor;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MetronomeVSTAudioProcessorEditor)
+    
+    juce::Label timerLabel;
+    juce::Slider beatsPerBarSlider;
+    juce::Label beatsPerBarLabel;
+    juce::ComboBox subdivisionBox;
+    juce::Label subdivisionLabel;
+    juce::Slider bpmSlider;
+    juce::Label bpmLabel;
+    
+    std::unique_ptr<ComboBoxAttachment> subdivisionAttachment;
+    std::unique_ptr<SliderAttachment> beatsPerBarAttachment;
+    std::unique_ptr<SliderAttachment> bpmAttachment;
+    
 
     juce::ImageButton noireButton;
     juce::ImageButton crochesButton;
